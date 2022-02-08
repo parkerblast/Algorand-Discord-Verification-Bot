@@ -1,0 +1,8 @@
+{
+  "name": "verify-bot",
+  "author": "PDaddy <btparker922@gmail.com>",
+  "publish": false,
+  "dependencies": {
+    "lib": "latest"
+  }
+}

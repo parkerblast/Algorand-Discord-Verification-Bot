@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <title>Welcome to Autocode</title>
+<style>
+  body {
+    font-family: Arial;
+    line-height: 1.5em;
+    max-width: 768px;
+    margin: 0px auto;
+    padding: 64px;
+  }
+  code {
+    border: 1px solid #d0d0d0;
+    background-color: #f0f0f0;
+    padding: 2px 4px;
+    border-radius: 3px;
+  }
+</style>
+  </head>
+  <body>
+    <h1>Hello! Welcome to Autocode</h1>
+    <p>
+      This is a sample HTML file. Files in the <code>www/</code> directory will
+      automatically be converted into static webpages and resources.
+    </p>
+    <h2>Indexes</h2>
+    <p>
+      <code>index.html</code> / <code>index.htm</code> are special. They refer
+      to the root directory and will be available at <code>[example.com/service]/</code>
+      as well as <code>[example.com/service]/index.html</code>.
+      <br><br>
+      <strong>Note:</strong> <code>[example.com/service]</code> means your service
+      URL, usually something like <code>username.api.stdlib.com/service@env</code>,
+      though you can define custom hostnames in your dashboard.
+    </p>
+    <h2>404 Error Pages (Not Found)</h2>
+    <p>
+      Name a file <code>404.html</code> / <code>404.htm</code> to create a
+      404 (not found) handler for a specific directory. It will automatically
+      apply to any directory above it unless there's a higher priority 404
+      page found. This is similar to the behavior of 
+      <code>functions/__notfound__.js</code> files and will compete with them
+      for priority.
+    </p>
+    <h2>Combining Endpoints and Static Files</h2>
+    <p>
+      You can use serverless functions (endpoints) and static files in the same
+      project by having both a <code>functions/</code> and a <code>www/</code> directory.
+      Projects can not have two files with the same route, meaning you can't
+      have both <code>functions/__main__.js</code> and <code>www/index.html</code>
+      in the same project.
+    </p>
+  </body>
+</html>
