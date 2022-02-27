@@ -5,6 +5,12 @@ let memberID = context.params.event.member.user.id;
 let serverID = context.params.event.guild_id;
 const followupID = context.params.event.message.id;
 
+await lib.discord.interactions['@1.0.0'].responses.ephemeral.create({
+  token: token,
+  content: `<@!${context.params.event.member.user.id}> we are retrying to register your wallet!`,
+  response_type: 'CHANNEL_MESSAGE_WITH_SOURCE'
+});
+
 let walletresult = await lib.airtable.query['@1.0.0'].select({
   table: `926947845767049246`,
   where: [
@@ -34,6 +40,14 @@ let creatorWallet2 = await lib.utils.kv.get({
 });
 let creatorWallet3 = await lib.utils.kv.get({
   key: "CreatorWallet2: " + serverID,
+});
+let logChannel = await lib.utils.kv.get({
+  key: "logChannel: " + serverID,
+});
+
+let message = await lib.discord.channels['@0.2.0'].messages.create({
+  "channel_id": logChannel,
+  content: `<@!${context.params.event.member.user.id}> attempted to register this **wallet:** ` + walletString + ` **!**`,
 });
 
 const currentTime = new Date();
@@ -69,9 +83,8 @@ if (verifOpt == true) {
   }
   
   if (verifOwn == true){
-    let Followup = await lib.discord.interactions['@0.1.0'].followups.ephemeral.create({
+    await lib.discord.interactions['@1.0.0'].responses.update({
       token: token,
-      message_id: followupID, //paste followup messageID
       content: `Succesfully verified! Elephalgo Owner role given! **Welcome the Herd!**`,
     });
     await lib.discord.guilds['@0.1.0'].members.roles.update({
@@ -86,17 +99,15 @@ if (verifOpt == true) {
     });
   } 
   else {
-    let Followup = await lib.discord.interactions['@0.1.0'].followups.ephemeral.create({
+    await lib.discord.interactions['@1.0.0'].responses.update({
       token: token,
-      message_id: followupID, //paste followup messageID
       content: `No Elephalgos found in wallet given! Check out the weekly drop to get one!`,
     });
   }
 }
 else {
-  let Followup = await lib.discord.interactions['@0.1.0'].followups.ephemeral.create({
+  await lib.discord.interactions['@1.0.0'].responses.update({
     token: token,
-    message_id: followupID, //paste followup messageID
     content: `Not opted-in to proper asset or 3 minute time limit has expired. Try again after opting-in using the button below. It may take a few seconds for the block chain to verify your opt-in`,
     "components": [
         {

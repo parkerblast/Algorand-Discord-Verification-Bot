@@ -6,6 +6,12 @@ let serverID = context.params.event.guild_id;
 const token = context.params.event.token;
 console.log(walletString);
 
+await lib.discord.interactions['@1.0.0'].responses.ephemeral.create({
+  token: token,
+  content: `<@!${context.params.event.member.user.id}> we are attempting to register your **wallet:** ` + walletString + ` **!**`,
+  response_type: 'CHANNEL_MESSAGE_WITH_SOURCE'
+});
+
 let OwnerroleID = await lib.utils.kv.get({
   key: "OwnerRole: " + serverID,
 });
@@ -20,6 +26,14 @@ let creatorWallet2 = await lib.utils.kv.get({
 });
 let creatorWallet3 = await lib.utils.kv.get({
   key: "CreatorWallet2: " + serverID,
+});
+let logChannel = await lib.utils.kv.get({
+  key: "logChannel: " + serverID,
+})
+
+let message = await lib.discord.channels['@0.2.0'].messages.create({
+  "channel_id": logChannel,
+  content: `<@!${context.params.event.member.user.id}> attempted to register this **wallet:** ` + walletString + ` **!**`,
 });
 
 let memberresult = await lib.airtable.query['@1.0.0'].distinct({
@@ -69,14 +83,6 @@ else{
   });
 }
 
-let followup = await lib.discord.channels['@0.3.0'].messages.create({
-  "channel_id": `${context.params.event.channel_id}`,
-  content: `<@!${context.params.event.member.user.id}> we are attempting to register your **wallet:** ` + walletString + ` **!**`,
-});
-
-const followupID = followup.id;
-console.log(followupID);
-
 const currentTime = new Date();
 mathTime = new Date(currentTime - 180000);
 finalTime = mathTime.toISOString();
@@ -110,9 +116,8 @@ if (verifOpt == true) {
   
   if (verifOwn == true){
 
-    let editFollowup = await lib.discord.interactions['@0.1.0'].followups.ephemeral.create({
+    let editFollowup = await lib.discord.interactions['@1.0.0'].responses.update({
       token: token,
-      message_id: followup.id, //paste followup messageID
       content: `Succesfully verified! Elephalgo Owner role given! **Welcome the Herd!**`,
     });
     await lib.discord.guilds['@0.1.0'].members.roles.update({
@@ -127,17 +132,15 @@ if (verifOpt == true) {
     });
   } 
   else {
-    let editFollowup = await lib.discord.interactions['@0.1.0'].followups.ephemeral.create({
+    let editFollowup = await lib.discord.interactions['@1.0.0'].responses.update({
       token: token,
-      message_id: followup.id, //paste followup messageID
       content: `No Elephalgos found in wallet given! Check out the weekly drop to get one!`,
     });
   }
 }
 else {
-  let editFollowup = await lib.discord.interactions['@0.1.0'].followups.ephemeral.create({
+  let editFollowup = await lib.discord.interactions['@1.0.0'].responses.update({
     token: token,
-    message_id: followup.id, //paste followup messageID
     "content": "Not opted-in to proper asset or 3 minute time limit has expired. Try again after opting-in using the button below. It may take a few seconds for the block chain to verify your opt-in",
       "tts": false,
       "components": [

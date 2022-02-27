@@ -2,7 +2,7 @@ const lib = require('lib')({token: process.env.STDLIB_SECRET_TOKEN});
 const token = context.params.event.token;
 const followupID = context.params.event.message.id;
 
-await lib.discord.interactions['@0.0.0'].followups.update({
+await lib.discord.interactions['@1.0.0'].responses.update({
   token: token,
   message_id: followupID, //paste followup messageID
   content: 'Flexing your choice!',

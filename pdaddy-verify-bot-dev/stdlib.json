@@ -3,28 +3,10 @@
   "timeout": 30000,
   "connector": false,
   "events": {
-    "functions/events/discord/register_command.js": {
-      "name": "discord.command",
-      "subtype": {
-        "command": "register"
-      }
-    },
-    "functions/events/discord/flex_command.js": {
-      "name": "discord.command",
-      "subtype": {
-        "command": "flex"
-      }
-    },
     "functions/events/discord/message/button/OptinButton.js": {
       "name": "discord.message.button.interaction",
       "subtype": {
         "custom_id": "row_0_button_1"
-      }
-    },
-    "functions/events/discord/config_Creatorwallet_command.js": {
-      "name": "discord.command",
-      "subtype": {
-        "command": "config-creatorwallet"
       }
     },
     "functions/events/discord/message/selectmenu/selectmenuflex_command.js": {
@@ -33,34 +15,58 @@
         "custom_id": "flexselectmenu"
       }
     },
-    "functions/events/discord/config_CollectionName_command.js": {
-      "name": "discord.command",
-      "subtype": {
-        "command": "config-collection-name"
-      }
-    },
-    "functions/events/discord/help_command.js": {
-      "name": "discord.command",
-      "subtype": {
-        "command": "help-verify"
-      }
-    },
-    "functions/events/discord/config_NonOwnerRole_command.js": {
-      "name": "discord.command",
-      "subtype": {
-        "command": "config-nonowner"
-      }
-    },
-    "functions/events/discord/check_command.js": {
+    "functions/events/discord/command/check_command.js": {
       "name": "discord.command",
       "subtype": {
         "command": "check"
       }
     },
-    "functions/events/discord/config_OwnerRole_command.js": {
+    "functions/events/discord/command/config_CollectionName_command.js": {
+      "name": "discord.command",
+      "subtype": {
+        "command": "config-collection-name"
+      }
+    },
+    "functions/events/discord/command/config_Creatorwallet_command.js": {
+      "name": "discord.command",
+      "subtype": {
+        "command": "config-creatorwallet"
+      }
+    },
+    "functions/events/discord/command/config_NonOwnerRole_command.js": {
+      "name": "discord.command",
+      "subtype": {
+        "command": "config-nonowner"
+      }
+    },
+    "functions/events/discord/command/config_OwnerRole_command.js": {
       "name": "discord.command",
       "subtype": {
         "command": "config-owner"
+      }
+    },
+    "functions/events/discord/command/flex_command.js": {
+      "name": "discord.command",
+      "subtype": {
+        "command": "flex"
+      }
+    },
+    "functions/events/discord/command/help_command.js": {
+      "name": "discord.command",
+      "subtype": {
+        "command": "help-verify"
+      }
+    },
+    "functions/events/discord/command/register_command.js": {
+      "name": "discord.command",
+      "subtype": {
+        "command": "register"
+      }
+    },
+    "functions/events/discord/command/config_logChannel_command.js": {
+      "name": "discord.command",
+      "subtype": {
+        "command": "config-logchannel"
       }
     }
   }
