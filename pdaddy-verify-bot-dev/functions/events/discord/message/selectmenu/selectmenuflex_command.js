@@ -52,66 +52,131 @@ let nameList = result.rows[0].fields.nameList.split(",");
 let ipfsList = result.rows[0].fields.ipfsList.split(",");
 
 if(selection == 'all'){
-  for (let i = 0; i < 8; i++) { 
-  
-    let fileExt = '';   
-    let fileResponse = await lib.http.request['@1.1.6']({
-      method: 'GET',
-      url: ipfsList[i],
+  if(assetID.length < 8){
+   for (let i = 0; i < assetID.length; i++) { 
+    
+      let fileExt = '';   
+      let fileResponse = await lib.http.request['@1.1.6']({
+        method: 'GET',
+        url: ipfsList[i],
+        });
+      
+      console.log(fileResponse.headers['content-type'])
+      let fileData = fileResponse.body;
+      if (fileResponse.headers['content-type'] == 'image/jpeg'){
+        fileExt = ".jpg";
+      }
+      if (fileResponse.headers['content-type'] == 'image/gif'){
+        fileExt = '.gif';
+      }
+      if (fileResponse.headers['content-type'] == 'image/png'){
+        fileExt = '.png';
+      }
+      if (fileResponse.headers['content-type'] == 'video/webm'){
+        fileExt = '.webm';
+      }
+      console.log(fileExt);
+      
+      await lib.discord.channels['@0.2.0'].messages.create({
+        "channel_id": `${context.params.event.channel_id}`,
+        "tts": false,
+        "content": '',
+        "file": fileData,
+        "filename": fileResponse.headers.etag.split('"')[1] + fileExt,
+        "components": [
+          {
+            "type": 1,
+            "components": [
+              {
+                "style": 5,
+                "label": `NFT Explorer `,
+                "url": `https://www.nftexplorer.app/asset/` + assetID[i],
+                "disabled": false,
+                "type": 2
+              },
+              {
+                "style": 5,
+                "label": `Rand Gallery`,
+                "url": `https://www.randgallery.com/algo-collection/?address=` + assetID[i],
+                "disabled": false,
+                "type": 2
+              }
+            ]
+          }
+        ],
+        "embeds": [
+          {
+            "type": "rich",
+            "title": '**' + nameList[i] + '**',
+            "description": "",
+            "color": 0x0a0a0a
+          }
+        ]
       });
+    } 
+  }
+  else {
+    for (let i = 0; i < 8; i++) { 
     
-    console.log(fileResponse.headers['content-type'])
-    let fileData = fileResponse.body;
-    if (fileResponse.headers['content-type'] == 'image/jpeg'){
-      fileExt = ".jpg";
+      let fileExt = '';   
+      let fileResponse = await lib.http.request['@1.1.6']({
+        method: 'GET',
+        url: ipfsList[i],
+        });
+      
+      console.log(fileResponse.headers['content-type'])
+      let fileData = fileResponse.body;
+      if (fileResponse.headers['content-type'] == 'image/jpeg'){
+        fileExt = ".jpg";
+      }
+      if (fileResponse.headers['content-type'] == 'image/gif'){
+        fileExt = '.gif';
+      }
+      if (fileResponse.headers['content-type'] == 'image/png'){
+        fileExt = '.png';
+      }
+      if (fileResponse.headers['content-type'] == 'video/webm'){
+        fileExt = '.webm';
+      }
+      console.log(fileExt);
+      
+      await lib.discord.channels['@0.2.0'].messages.create({
+        "channel_id": `${context.params.event.channel_id}`,
+        "tts": false,
+        "content": '',
+        "file": fileData,
+        "filename": fileResponse.headers.etag.split('"')[1] + fileExt,
+        "components": [
+          {
+            "type": 1,
+            "components": [
+              {
+                "style": 5,
+                "label": `NFT Explorer `,
+                "url": `https://www.nftexplorer.app/asset/` + assetID[i],
+                "disabled": false,
+                "type": 2
+              },
+              {
+                "style": 5,
+                "label": `Rand Gallery`,
+                "url": `https://www.randgallery.com/algo-collection/?address=` + assetID[i],
+                "disabled": false,
+                "type": 2
+              }
+            ]
+          }
+        ],
+        "embeds": [
+          {
+            "type": "rich",
+            "title": '**' + nameList[i] + '**',
+            "description": "",
+            "color": 0x0a0a0a
+          }
+        ]
+      });
     }
-    if (fileResponse.headers['content-type'] == 'image/gif'){
-      fileExt = '.gif';
-    }
-    if (fileResponse.headers['content-type'] == 'image/png'){
-      fileExt = '.png';
-    }
-    if (fileResponse.headers['content-type'] == 'video/webm'){
-      fileExt = '.webm';
-    }
-    console.log(fileExt);
-    
-    await lib.discord.channels['@0.2.0'].messages.create({
-      "channel_id": `${context.params.event.channel_id}`,
-      "tts": false,
-      "content": '',
-      "file": fileData,
-      "filename": fileResponse.headers.etag.split('"')[1] + fileExt,
-      "components": [
-        {
-          "type": 1,
-          "components": [
-            {
-              "style": 5,
-              "label": `NFT Explorer `,
-              "url": `https://www.nftexplorer.app/asset/` + assetID[i],
-              "disabled": false,
-              "type": 2
-            },
-            {
-              "style": 5,
-              "label": `Rand Gallery`,
-              "url": `https://www.randgallery.com/algo-collection/?address=` + assetID[i],
-              "disabled": false,
-              "type": 2
-            }
-          ]
-        }
-      ],
-      "embeds": [
-        {
-          "type": "rich",
-          "title": '**' + nameList[i] + '**',
-          "description": "",
-          "color": 0x0a0a0a
-        }
-      ]
-    });
   }
 }
 else {
@@ -175,7 +240,3 @@ else {
       ]
   });
 }
-
-await lib.utils.kv.clear({
-  key: memberID,
-});

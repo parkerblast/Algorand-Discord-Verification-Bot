@@ -51,7 +51,7 @@ let message = await lib.discord.channels['@0.2.0'].messages.create({
 });
 
 const currentTime = new Date();
-mathTime = new Date(currentTime - 180000);
+mathTime = new Date(currentTime - 300000);
 finalTime = mathTime.toISOString();
 console.log(finalTime);
 
