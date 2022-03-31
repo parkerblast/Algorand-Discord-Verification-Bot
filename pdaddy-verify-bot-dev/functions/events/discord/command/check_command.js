@@ -4,6 +4,7 @@ const lib = require('lib')({token: process.env.STDLIB_SECRET_TOKEN});
 let memberID = context.params.event.member.user.id;
 let serverID = context.params.event.guild_id;
 let storedValue = context.params.event.data.options[0].value;
+let creatorAssets = [];
 const token = context.params.event.token;
 const role = context.params.event.member.roles;
 console.log(role);
@@ -11,12 +12,7 @@ console.log(role);
 let creatorWallet = await lib.utils.kv.get({
   key: "CreatorWallet0: " + serverID,
 });
-let creatorWallet2 = await lib.utils.kv.get({
-  key: "CreatorWallet1: " + serverID,
-});
-let creatorWallet3 = await lib.utils.kv.get({
-  key: "CreatorWallet2: " + serverID,
-});
+
 let roles = await lib.discord.guilds['@0.0.6'].roles.list({
   guild_id: serverID,
 });
@@ -28,6 +24,13 @@ for (let i = 0; i < roles.length; i++){
 }
 
 if (role.includes(adminRole) && storedValue != undefined){
+  let assetResult = await lib.http.request['@1.1.6'].get({
+    url: 'https://algoexplorerapi.io/v2/accounts/' + creatorWallet // required
+  });
+  for (let i =0; i < assetResult.data.assets.length; i++){
+    creatorAssets.push(assetResult.data.assets[i]['asset-id'])
+  }
+  
   let result = await lib.http.request['@1.1.6'].get({
     url: 'https://algoexplorerapi.io/v2/accounts/' + storedValue // required
   });
@@ -43,7 +46,7 @@ if (role.includes(adminRole) && storedValue != undefined){
   let content = [];
   
   for (let i = 0; i < result.data.assets.length; i++) {
-    if (result.data.assets[i].creator == creatorWallet && result.data.assets[i].amount > 0 || result.data.assets[i].creator == creatorWallet2 && result.data.assets[i].amount > 0 || result.data.assets[i].creator == creatorWallet3 && result.data.assets[i].amount > 0 ){
+    if (creatorAssets.includes(result.data.assets[i]['asset-id']) && result.data.assets[i].amount > 0 ){
       if (assetID.length < 15 ){
          assetID.push(result.data.assets[i]["asset-id"]);
       }

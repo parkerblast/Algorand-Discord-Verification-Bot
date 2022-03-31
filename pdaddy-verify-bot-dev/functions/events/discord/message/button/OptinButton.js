@@ -3,6 +3,7 @@ const lib = require('lib')({token: process.env.STDLIB_SECRET_TOKEN});
 const token = context.params.event.token;
 let memberID = context.params.event.member.user.id;
 let serverID = context.params.event.guild_id;
+let creatorAssets = [];
 const followupID = context.params.event.message.id;
 
 await lib.discord.interactions['@1.0.0'].responses.ephemeral.create({
@@ -35,12 +36,6 @@ let NonOwnerroleID = await lib.utils.kv.get({
 let creatorWallet = await lib.utils.kv.get({
   key: "CreatorWallet0: " + serverID,
 });
-let creatorWallet2 = await lib.utils.kv.get({
-  key: "CreatorWallet1: " + serverID,
-});
-let creatorWallet3 = await lib.utils.kv.get({
-  key: "CreatorWallet2: " + serverID,
-});
 let logChannel = await lib.utils.kv.get({
   key: "logChannel: " + serverID,
 });
@@ -69,14 +64,22 @@ for (let i = 0; i < result2.data.transactions.length; i++) {
 }
 
 if (verifOpt == true) {
+  let creatorAssets = [];
+  
+  let assetResult = await lib.http.request['@1.1.6'].get({
+    url: 'https://algoindexer.algoexplorerapi.io/v2/accounts/' + creatorWallet + '/created-assets?limit=1000'// required
+  });
+  for (let i =0; i < assetResult.data.assets.length; i++){
+    creatorAssets.push(assetResult.data.assets[i].index)
+  }
   let result = await lib.http.request['@1.1.6'].get({
-    url: 'https://algoexplorerapi.io/v2/accounts/' + walletString // required
+    url: 'https://algoindexer.algoexplorerapi.io/v2/accounts/' + walletString + '/assets'// required
   });
   console.log(JSON.stringify(result.data.assets[0]));
   
   verifOwn = false;
   for (let i = 0; i < result.data.assets.length; i++) {
-    if (result.data.assets[i].creator == creatorWallet && result.data.assets[i].amount > 0 || result.data.assets[i].creator == creatorWallet2 && result.data.assets[i].amount > 0 || result.data.assets[i].creator == creatorWallet3 && result.data.assets[i].amount > 0 ){
+    if (creatorAssets.includes(result.data.assets[i]['asset-id']) && result.data.assets[i].amount > 0 ){
       verifOwn = true;
       break;
     } 

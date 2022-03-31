@@ -22,12 +22,6 @@ let roleNeeded = await lib.utils.kv.get({
 let creatorWallet = await lib.utils.kv.get({
   key: 'CreatorWallet0: ' + serverID,
 });
-let creatorWallet2 = await lib.utils.kv.get({
-  key: 'CreatorWallet1: ' + serverID,
-});
-let creatorWallet3 = await lib.utils.kv.get({
-  key: 'CreatorWallet2: ' + serverID,
-});
 
 let result = await lib.airtable.query['@1.0.0'].select({
   table: '926947845767049246', // required
@@ -46,47 +40,45 @@ console.log(storedValue);
 
 if (role.includes(roleNeeded) && storedValue != undefined) {
   let result = await lib.http.request['@1.1.6'].get({
-    url: 'https://algoexplorerapi.io/v2/accounts/' + storedValue, // required
+    url: 'https://algoindexer.algoexplorerapi.io/v2/accounts/' + storedValue + '/assets'// required
   });
 
   let assetID = [];
   let nameList = [];
   let ipfsList = [];
-
+  let creatorAssets = [];
+  let creatorNames = [];
+  let creatorIpfs = [];
+  
+  let assetResult = await lib.http.request['@1.1.6'].get({
+    url: 'https://algoindexer.algoexplorerapi.io/v2/accounts/' + creatorWallet + '/created-assets?limit=1000'// required
+  });
+  for (let i =0; i < assetResult.data.assets.length; i++){
+    creatorAssets.push(assetResult.data.assets[i].index)
+    creatorNames.push(assetResult.data.assets[i].params.name)
+    creatorIpfs.push(assetResult.data.assets[i].params.url.split('ipfs://')[1])
+  }
   for (let i = 0; i < result.data.assets.length; i++) {
-    if (
-      (result.data.assets[i].creator == creatorWallet &&
-        result.data.assets[i].amount > 0) ||
-      (result.data.assets[i].creator == creatorWallet2 &&
-        result.data.assets[i].amount > 0) ||
-      (result.data.assets[i].creator == creatorWallet3 &&
-        result.data.assets[i].amount > 0)
-    ) {
+    if ( creatorAssets.includes(result.data.assets[i]['asset-id']) && result.data.assets[i].amount > 0 ){
       if (assetID.length < 24) {
         assetID.push(result.data.assets[i]['asset-id']);
+        let index = creatorAssets.indexOf(result.data.assets[i]['asset-id']);
+        nameList.push(creatorNames[index]);
+        ipfsList.push('https://ipfsgateway.randgallery.com/ipfs/' + creatorIpfs[index].split('#')[0]);
       } else {
         break;
       }
     }
   }
   console.log(assetID);
+  console.log(nameList);
 
   if (assetID.length == 0) {
-    await lib.discord.interactions['@.0.0'].responses.update({
+    await lib.discord.interactions['@1.0.0'].responses.update({
       token: token,
       content: `No assets found in registered wallet!`,
     });
   } else {
-    for (let i = 0; i < assetID.length; i++) {
-      let result = await lib.http.request['@1.1.6'].get({
-        url: 'https://algoindexer.algoexplorerapi.io/v2/assets/' + assetID[i], // required
-      });
-      let tempString = result.data.asset.params.url.split('/')[2];
-      ipfsList.push(
-        'https://ipfsgateway.randgallery.com/ipfs/' + tempString.split('#')[0]
-      );
-      nameList.push(result.data.asset.params.name);
-    }
 
     await lib.airtable.query['@1.0.0'].update({
       table: '926947845767049246', // required

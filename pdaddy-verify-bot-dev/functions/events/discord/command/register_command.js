@@ -21,12 +21,6 @@ let NonOwnerroleID = await lib.utils.kv.get({
 let creatorWallet = await lib.utils.kv.get({
   key: "CreatorWallet0: " + serverID,
 });
-let creatorWallet2 = await lib.utils.kv.get({
-  key: "CreatorWallet1: " + serverID,
-});
-let creatorWallet3 = await lib.utils.kv.get({
-  key: "CreatorWallet2: " + serverID,
-});
 let logChannel = await lib.utils.kv.get({
   key: "logChannel: " + serverID,
 })
@@ -101,14 +95,21 @@ for (let i = 0; i < result2.data.transactions.length; i++) {
 }
 
 if (verifOpt == true) {
-  let result = await lib.http.request['@1.1.6'].get({
-    url: 'https://algoexplorerapi.io/v2/accounts/' + walletString // required
+  let creatorAssets = [];
+  
+  let assetResult = await lib.http.request['@1.1.6'].get({
+    url: 'https://algoindexer.algoexplorerapi.io/v2/accounts/' + creatorWallet + '/created-assets?limit=1000'// required
   });
-  console.log(JSON.stringify(result.data.assets[0]));
+  for (let i =0; i < assetResult.data.assets.length; i++){
+    creatorAssets.push(assetResult.data.assets[i].index)
+  }
+  let result = await lib.http.request['@1.1.6'].get({
+    url: 'https://algoindexer.algoexplorerapi.io/v2/accounts/' + walletString + '/assets' // required
+  });
   
   verifOwn = false;
   for (let i = 0; i < result.data.assets.length; i++) {
-    if (result.data.assets[i].creator == creatorWallet && result.data.assets[i].amount > 0 || result.data.assets[i].creator == creatorWallet2 && result.data.assets[i].amount > 0 || result.data.assets[i].creator == creatorWallet3 && result.data.assets[i].amount > 0 ){
+    if ( creatorAssets.includes(result.data.assets[i]['asset-id']) && result.data.assets[i].amount > 0 ){
       verifOwn = true;
       break;
     } 

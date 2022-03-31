@@ -24,12 +24,6 @@ await lib.discord.channels['@0.2.0'].messages.create({
 let creatorWallet = await lib.utils.kv.get({
   key: "CreatorWallet0: " + serverID,
 });
-let creatorWallet2 = await lib.utils.kv.get({
-  key: "CreatorWallet1: " + serverID,
-});
-let creatorWallet3 = await lib.utils.kv.get({
-  key: "CreatorWallet2: " + serverID,
-});
 
 let result = await lib.airtable.query['@1.0.0'].select({
   table: `926947845767049246`,
