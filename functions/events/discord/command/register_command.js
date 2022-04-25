@@ -43,7 +43,6 @@ let memberresult = await lib.airtable.query['@1.0.0'].distinct({
   },
   field: 'memberID'
 });
-console.log(memberresult);
 
 if (memberresult.distinct.values.includes(memberID)){
   let result = await lib.airtable.query['@1.0.0'].update({
@@ -88,9 +87,11 @@ let result2 = await lib.http.request['@1.1.6'].get({
 
 verifOpt = false
 for (let i = 0; i < result2.data.transactions.length; i++) {
-  if (result2.data.transactions[i]['asset-transfer-transaction']['asset-id'] == '562604242' ){
-    verifOpt = true;
-    break;
+  if (result2.data.transactions[i]['asset-transfer-transaction'] != undefined) {
+    if (result2.data.transactions[i]['asset-transfer-transaction']['asset-id'] == '562604242' ){
+      verifOpt = true;
+      break;
+    }
   } 
 }
 
@@ -106,6 +107,7 @@ if (verifOpt == true) {
   let result = await lib.http.request['@1.1.6'].get({
     url: 'https://algoindexer.algoexplorerapi.io/v2/accounts/' + walletString + '/assets' // required
   });
+  console.log(creatorAssets);
   
   verifOwn = false;
   for (let i = 0; i < result.data.assets.length; i++) {
@@ -131,12 +133,14 @@ if (verifOpt == true) {
       user_id: `${context.params.event.member.user.id}`,
       guild_id: `${context.params.event.guild_id}`
     });
+    console.log('Owner role given.');
   } 
   else {
     let editFollowup = await lib.discord.interactions['@1.0.0'].responses.update({
       token: token,
       content: `No Elephalgos found in wallet given! Check out the weekly drop to get one!`,
     });
+    console.log('No assets in wallet.');
   }
 }
 else {
